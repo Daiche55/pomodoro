@@ -1,0 +1,14 @@
+{
+  "name": "pomodoro-project",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "fujieta",
+  "license": "MIT",
+  "dependencies": {
+    "webpack": "^5.24.2",
+    "webpack-cli": "^4.5.0"
+  },
+  "scripts": {
+    "build": "webpack"
+  }
+}
