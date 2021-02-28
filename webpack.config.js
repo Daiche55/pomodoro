@@ -7,8 +7,7 @@ module.exports = {
     path: path.resolve(__dirname, 'public/js'),
     filename: '[name].js',
   },
-  watch: true,
-  devtools: false,
+  devtool: false,
   resolve: {
     extensions: ['.ts', '.tsx', '.js']
   },
@@ -17,15 +16,22 @@ module.exports = {
       {
         test: /\.js$/,
         exclude: /node_modules/,
-        use: { loader: 'babel-loader' },
-        options: {
-          presets: ["@babel/preset-env"]
+        use: { 
+          loader: 'babel-loader', 
+          options: {
+            presets: ["@babel/preset-env"]
+          }
         }
       },
       {
-        test: /\.tsx$/,
+        test: /\.(ts|tsx)$/,
         exclude: /node_modules/,
-        use: { loader: 'ts-loader' }
+        use: [
+          { loader: "babel-loader" },
+          { 
+            loader: 'ts-loader',
+          }
+        ],
       }
     ]
   }

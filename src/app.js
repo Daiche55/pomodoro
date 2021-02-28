@@ -1,3 +1,5 @@
-import { hoge } from './hoge';
-console.log(hoge);
-console.log("c");
+import { MyComponent } from './hoge';
+import { test } from './test';
+
+
+console.log(test);
