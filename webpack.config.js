@@ -2,14 +2,19 @@ const path = require('path');
 
 module.exports = {
   mode: 'development',
-  entry: path.resolve(__dirname, 'src/app.js'),
+  entry: path.resolve(__dirname, "js/packs/app.tsx"),
   output: {
     path: path.resolve(__dirname, 'public/js'),
     filename: '[name].js',
   },
-  devtool: false,
+  devServer: {
+    open: true,
+    port: 3000,
+    contentBase: path.resolve(__dirname, 'public')
+  },
+  devtool: 'eval',
   resolve: {
-    extensions: ['.ts', '.tsx', '.js']
+    extensions: ['.ts', '.tsx', '.js', '.jsx']
   },
   module: {
     rules: [
@@ -28,11 +33,24 @@ module.exports = {
         exclude: /node_modules/,
         use: [
           { loader: "babel-loader" },
-          { 
-            loader: 'ts-loader',
-          }
+          {
+            loader: "ts-loader",
+            options: {
+              transpileOnly: true,
+            }
+          },
         ],
-      }
+      },
+      {
+        test: /\.jsx?$/,
+        exclude: /node_modules/,
+        use: {
+          loader: "babel-loader",
+          options: {
+            presets: ["@babel/preset-env", "@babel/preset-react"]
+          }
+        }
+      },
     ]
   }
 };
