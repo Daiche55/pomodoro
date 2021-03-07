@@ -12,3 +12,4 @@ time: Number
 ): string => {
   return `${("00" + time).slice(-2)} : 00`
 }
+

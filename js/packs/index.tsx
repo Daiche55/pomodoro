@@ -1,19 +1,33 @@
 import * as React from 'react';
-import { formatTime, formatCowntDownClock } from '../lib/utils/formatTime';
-
-
+import { formatCowntDownClock } from '../lib/utils/formatTime';
+import useInterval from 'use-interval';
 
 const Index: React.FC = () => {
-  const [timer, setTimer] = React.useState<number>(25);
+  const [timerMinute, setTimerMinute] = React.useState<number>(25);
+  const [timerSecond, setTimerSecond] = React.useState<number>(0);
   const [breakTimer, setBreakTimer] = React.useState<number>(5);
+  const [isRunning, setIsRunning] = React.useState<boolean>(false);
+  const [intervalId, setIntervalId] = React.useState(null);
+
+
+  React.useEffect(() => {
+    if (isRunning) {
+      const id = setInterval(() => {
+        setTimerSecond(timerSecond => timerSecond - 1);
+      }, 1000)
+      setIntervalId(id)
+    } else {
+      clearInterval(intervalId);
+    }
+  }, [isRunning]);
 
   return (
     <React.Fragment>      
-      <div className="">
+      <div>
         集中
         <select 
-          defaultValue={timer} 
-          onChange={(e) => setTimer(parseInt(e.target.value))}>
+          defaultValue={timerMinute} 
+          onChange={(e) => setTimerMinute(parseInt(e.target.value))}>
           {[...Array(60)].reverse().map((_, i) => (
             <option key={i + 1} value={i + 1}>
               {formatCowntDownClock(i + 1)}
@@ -37,8 +51,12 @@ const Index: React.FC = () => {
         </select>
       </div>
 
-      <button>
-      <i className="fas fa-dog fa-3x"></i>
+      {timerMinute}:{timerSecond}
+
+      <button
+        onClick={() => setIsRunning(!isRunning)}
+      >
+        <i className="far fa-clock fa-3x"></i>
       </button>
     </React.Fragment>
   )
