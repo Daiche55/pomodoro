@@ -1,20 +1,22 @@
 const path = require('path');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
   mode: 'development',
-  entry: path.resolve(__dirname, "js/packs/app.tsx"),
+  entry: path.resolve(__dirname, "js/packs/App.tsx"),
   output: {
-    path: path.resolve(__dirname, 'public/js'),
+    path: path.resolve(__dirname, 'public/js/'),
     filename: '[name].js',
   },
   devServer: {
     open: true,
-    port: 3000,
-    contentBase: path.resolve(__dirname, 'public')
+    port: 4000,
+    contentBase: path.resolve(__dirname, 'public'),
+    watchContentBase: true,
   },
   devtool: 'eval',
   resolve: {
-    extensions: ['.ts', '.tsx', '.js', '.jsx']
+    extensions: ['.ts', '.tsx', '.js', '.jsx'],
   },
   module: {
     rules: [
@@ -42,7 +44,7 @@ module.exports = {
         ],
       },
       {
-        test: /\.jsx?$/,
+        test: /\.jsx$/,
         exclude: /node_modules/,
         use: {
           loader: "babel-loader",
@@ -51,6 +53,15 @@ module.exports = {
           }
         }
       },
+      {
+        test: /\.scss$/,
+        use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader']
+      }
     ]
-  }
+  },
+  plugins: [
+    new MiniCssExtractPlugin({
+      filename: './css/[name]-[contentHash].css',
+    })
+  ]
 };

@@ -1,39 +1,37 @@
 import * as React from 'react';
-import { formatCowntDownClock } from '../lib/utils/formatTime';
-import useInterval from 'use-interval';
+import { formatCowntDownClock, formatDisplayTime } from '../lib/utils/formatTime';
 
 const Index: React.FC = () => {
-  const [timerMinute, setTimerMinute] = React.useState<number>(25);
-  const [timerSecond, setTimerSecond] = React.useState<number>(0);
+  const [timer, setTimer] = React.useState<number>(60 * 25);
   const [breakTimer, setBreakTimer] = React.useState<number>(5);
   const [isRunning, setIsRunning] = React.useState<boolean>(false);
-  const [intervalId, setIntervalId] = React.useState(null);
-
+  console.log("hoaw")
 
   React.useEffect(() => {
     if (isRunning) {
+      console.log("hoge")
       const id = setInterval(() => {
-        setTimerSecond(timerSecond => timerSecond - 1);
-      }, 1000)
-      setIntervalId(id)
+        console.log(timer);
+        setTimer(timer => timer - 1)
+      }, 1000);
+      return (() => clearInterval(id));
     } else {
-      clearInterval(intervalId);
+
     }
   }, [isRunning]);
 
   return (
-    <React.Fragment>      
+    <React.Fragment>   
       <div>
-        集中
+        集中a
         <select 
-          defaultValue={timerMinute} 
-          onChange={(e) => setTimerMinute(parseInt(e.target.value))}>
-          {[...Array(60)].reverse().map((_, i) => (
+          defaultValue={timer / 60}
+          onChange={(e) => setTimer(parseInt(e.target.value) * 60)}>
+          {[...Array(60)].map((_, i) => (
             <option key={i + 1} value={i + 1}>
               {formatCowntDownClock(i + 1)}
             </option>
           ))}
-
         </select>
       </div>
 
@@ -51,7 +49,7 @@ const Index: React.FC = () => {
         </select>
       </div>
 
-      {timerMinute}:{timerSecond}
+      残り時間 {formatDisplayTime(timer)}
 
       <button
         onClick={() => setIsRunning(!isRunning)}
