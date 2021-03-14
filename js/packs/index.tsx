@@ -2,16 +2,18 @@ import * as React from 'react';
 import { formatCowntDownClock, formatDisplayTime } from '../lib/utils/formatTime';
 
 const Index: React.FC = () => {
-  const [timer, setTimer] = React.useState<number>(60 * 25);
+  const [initialTimer, setInitialTimer] = React.useState<number>(5);
+  const [initialBreakTimer, setInitialBreakTimer] = React.useState<number>(5);
+  const [timer, setTimer] = React.useState<number>(5);
   const [breakTimer, setBreakTimer] = React.useState<number>(5);
   const [isRunning, setIsRunning] = React.useState<boolean>(false);
-  console.log("hoaw")
+  const [isBreakRunning, setIsBreakRunning] = React.useState<boolean>(false);
+  const [mode, setMode] = React.useState<string>('timer');
+  const [end, setEnd] = React.useState<boolean>(false);
 
   React.useEffect(() => {
     if (isRunning) {
-      console.log("hoge")
       const id = setInterval(() => {
-        console.log(timer);
         setTimer(timer => timer - 1)
       }, 1000);
       return (() => clearInterval(id));
@@ -20,43 +22,116 @@ const Index: React.FC = () => {
     }
   }, [isRunning]);
 
+  React.useEffect(() => {
+    console.log("休憩");
+    if (isBreakRunning) {
+      setMode('break_timer');
+      const id = setInterval(() => {
+        setBreakTimer(breakTimer => breakTimer - 1);
+      }, 1000);
+      return (() => clearInterval(id));
+    } else {
+
+    }
+  }, [isBreakRunning]);
+
+  const playSound = React.useCallback(() => {
+    const audioElem = new Audio();
+    audioElem.src = 'pomodoro-project/../../src/timerStopSound.mp3';
+    audioElem.volume = 0.1;
+    audioElem.play();
+  }, [])
+
+  if (timer === 0 && isRunning) {
+    setIsRunning(false);
+    setEnd(true);
+    playSound();
+    setIsBreakRunning(true);
+    return;
+  };
+
   return (
-    <React.Fragment>   
-      <div>
-        集中a
-        <select 
-          defaultValue={timer / 60}
-          onChange={(e) => setTimer(parseInt(e.target.value) * 60)}>
-          {[...Array(60)].map((_, i) => (
-            <option key={i + 1} value={i + 1}>
-              {formatCowntDownClock(i + 1)}
-            </option>
-          ))}
-        </select>
-      </div>
+    <> 
+      <div className="hoge">
+        <div>
+          集中
+          <select 
+            defaultValue={timer / 60}
+            onChange={(e) => {
+              const time = parseInt(e.target.value) * 60;
+              setTimer(time);
+              setInitialTimer(time);
+            }}>
+            {[...Array(60)].map((_, i) => (
+              <option key={i + 1} value={i + 1}>
+                {formatCowntDownClock(i + 1)}
+              </option>
+            ))}
+          </select>
+        </div>
 
-      <div className="">
-        休憩
-        <select 
-          defaultValue={breakTimer}
-          onChange={(e) => setBreakTimer(parseInt(e.target.value))}
-        >
-          {[...Array(60)].reverse().map((_, i) => (
-            <option key={i + 1} value={i + 1}>
-              {formatCowntDownClock(i + 1)}
-            </option>
-          ))}
-        </select>
-      </div>
+        <div>
+          休憩
+          <select 
+            defaultValue={breakTimer / 60}
+            onChange={(e) => {
+              const time = parseInt(e.target.value) * 60;
+              setBreakTimer(time),
+              setInitialBreakTimer(time);
+            }}>
+            {[...Array(60)].reverse().map((_, i) => (
+              <option key={i + 1} value={i + 1}>
+                {formatCowntDownClock(i + 1)}
+              </option>
+            ))}
+          </select>
+        </div>
 
-      残り時間 {formatDisplayTime(timer)}
+        <div>
+          {mode === 'timer' ? '集中' : '休憩' }： 残り時間 {formatDisplayTime(timer)}
+        </div>
 
-      <button
-        onClick={() => setIsRunning(!isRunning)}
-      >
-        <i className="far fa-clock fa-3x"></i>
-      </button>
-    </React.Fragment>
+        <div className="timer_button">
+          <button
+            onClick={() => {
+              if (mode === 'timer') {
+                setIsRunning(!isRunning);
+              } else {
+                setIsBreakRunning(!breakTimer);
+              }
+            }}
+          >
+            <i className="far fa-play-circle far-x3"></i>
+          </button>
+
+          <button
+            onClick={() => {
+              setBreakTimer(initialBreakTimer);
+              setTimer(initialTimer);
+            }}
+          >
+            <i className="far fa-stop-circle"></i>
+          </button>
+
+          <button
+            onClick={() => {
+              if (mode === 'timer') {
+                setMode('break_timer');
+                setTimer(initialTimer);
+                setIsRunning(true);
+              } else {
+                setMode('timer');
+                setBreakTimer(initialBreakTimer);
+                setIsBreakRunning(true);
+              }
+            }}
+          >
+            <i className="fas fa-history"></i>
+          </button>
+
+        </div>
+      </div>  
+    </>
   )
 }
 
