@@ -3,9 +3,9 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
   mode: 'development',
-  entry: path.resolve(__dirname, "js/packs/App.tsx"),
+  entry: path.resolve(__dirname, "src/scripts/views/App.tsx"),
   output: {
-    path: path.resolve(__dirname, 'public/js/'),
+    path: path.resolve(__dirname, 'dist/js/'),
     filename: '[name].js',
   },
   devServer: {
@@ -61,7 +61,7 @@ module.exports = {
   },
   plugins: [
     new MiniCssExtractPlugin({
-      filename: './css/[name].css',
+      filename: '../css/[name].css',
     })
   ]
 };

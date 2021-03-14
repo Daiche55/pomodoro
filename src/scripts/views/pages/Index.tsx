@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { formatCowntDownClock, formatDisplayTime } from '../lib/utils/formatTime';
+import { formatCowntDownClock, formatDisplayTime } from '../../utils/formatTime';
 
 const Index: React.FC = () => {
   const [initialTimer, setInitialTimer] = React.useState<number>(5);
@@ -8,8 +8,7 @@ const Index: React.FC = () => {
   const [breakTimer, setBreakTimer] = React.useState<number>(5);
   const [isRunning, setIsRunning] = React.useState<boolean>(false);
   const [isBreakRunning, setIsBreakRunning] = React.useState<boolean>(false);
-  const [mode, setMode] = React.useState<string>('timer');
-  const [end, setEnd] = React.useState<boolean>(false);
+  const [mode, setMode] = React.useState<string>('initial');
 
   React.useEffect(() => {
     if (isRunning) {
@@ -23,9 +22,8 @@ const Index: React.FC = () => {
   }, [isRunning]);
 
   React.useEffect(() => {
-    console.log("休憩");
     if (isBreakRunning) {
-      setMode('break_timer');
+      setMode('break');
       const id = setInterval(() => {
         setBreakTimer(breakTimer => breakTimer - 1);
       }, 1000);
@@ -44,7 +42,6 @@ const Index: React.FC = () => {
 
   if (timer === 0 && isRunning) {
     setIsRunning(false);
-    setEnd(true);
     playSound();
     setIsBreakRunning(true);
     return;
@@ -88,13 +85,13 @@ const Index: React.FC = () => {
         </div>
 
         <div>
-          {mode === 'timer' ? '集中' : '休憩' }： 残り時間 {formatDisplayTime(timer)}
+          {mode === 'initial' ? '集中' : '休憩' }： 残り時間 {formatDisplayTime(timer)}
         </div>
 
         <div className="timer_button">
           <button
             onClick={() => {
-              if (mode === 'timer') {
+              if (mode === 'focus') {
                 setIsRunning(!isRunning);
               } else {
                 setIsBreakRunning(!breakTimer);
@@ -115,11 +112,11 @@ const Index: React.FC = () => {
 
           <button
             onClick={() => {
-              if (mode === 'timer') {
-                setMode('break_timer');
+              if (mode === 'focus') {
+                setMode('break');
                 setTimer(initialTimer);
                 setIsRunning(true);
-              } else {
+              } else if (mode === 'break') {
                 setMode('timer');
                 setBreakTimer(initialBreakTimer);
                 setIsBreakRunning(true);
